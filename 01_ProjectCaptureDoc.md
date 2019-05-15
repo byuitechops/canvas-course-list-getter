@@ -36,37 +36,39 @@ The core inputs to the program will answer these questions:
 1. Do you want to filter on courses associated with a blueprint course? (`true`, `false`)
 1. Do you want to filter by courses taught by specific teachers? [`Any Teacher ID`, `Any Teacher ID`]
 1. Do you want to filter by courses within subaccounts? [`Any Subaccount ID`,`Any Subaccount ID 2`]
-1. t
-1. t
-1. t
-1. t
+1. Which course state do you want to filter on? (`created`, `claimed`, `available`, `completed`, `deleted`, `all`)
+1. Would you like to filter by enrollment term id? (`enrollment term id`)
+1. Do you want to include a search term? (`Yes`,`No` (If yes require a response of the term. If no then don't include a term.))
 1. What information would you like to include with your course data? [`syllabus_body` , `term` , `course_progress` , `storage_quota_used_mb` , `total_students` , `teachers` , `account_name` , `concluded`]
-1. t
-1. t
-1. t
+1. How would you like to sort the results column by?: (`course_name`, `sis_course_id`, `teacher`, `account_name`)
+1. Do you want the order to be Ascending or Descending? (`asc`, `desc`)
+1. Do you want to search by the name of a course or teacher? (`course`, `teacher`)
+1. How would you like to output this data? [`Node Module`, `csv`, `json`, `console`]
 
-?enrollment_type[]=teacher&enrollment_type[]=student&enrollment_type[]=ta
-
-```javascript
-
-
-```
+These questions will be answerable through a CLI or a DefaultConfig File
 
 ---
 
 
 #### Destination of Outputs
 
+1. A selected output folder as a JSON or CSV
+1. Directly into the inputs of a node module
 
 
 #### Definition of Outputs
 
-
+Node Module and JSON will look like: `https://canvas.instructure.com/doc/api/courses.html#Course`
+CSV will have corresponding Column names as JSON keys. Complex Objects will be stored as JSON strings within the CSV.
 
 ---
 
 #### General Requirements
 
+- Must be able to filter out which questions the program checks for or asks.
+- Take pure CLI inputs, or a config file as input, or hybrid
+- If config file is broken or missing information, that data will be prompted for in the CLI.
+- Using the prompted information, a querystring will be built to fit the syntax required for the Canvas API call defined at this link: `https://canvas.instructure.com/doc/api/all_resources.html#method.accounts.courses_api`, based on this base uri `/api/v1/accounts/1/courses`. The course list created will the response data from that generated API call.
 
 ---
 
@@ -77,23 +79,24 @@ Cli and Node Module
 -----
 -----
 
-# Set Expectations
+# **Set Expectations**
 
-### Timeline
+### **Timeline**
+2 weeks
 
+### **Best Mode of Contact**
+Slack, in-person
 
-### Best Mode of Contact
+### **Next Meeting**
+20 May 2019
 
-
-### Next Meeting
-
-
-### Action Items
-
+### **Action Items**
 
 #### TechOps
+Complete Design, ub code, write all questions that will be asked.
 
 #### Stakeholder
+None
 
 
 -----
