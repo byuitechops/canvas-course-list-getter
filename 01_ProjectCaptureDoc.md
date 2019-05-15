@@ -37,13 +37,13 @@ The core inputs to the program will answer these questions:
 1. t
 1. t
 1. t
+1. Do you want to filter based on enrollments? (`true`, `false`, `undefined (Don't Filter)`)
+1. Which state do you want to filter on? (`created`, `claimed`, `available`, `completed`, `deleted`, `all`)
+1. Do you want to include a search term? (`Yes`,`No` (If yes require a response of the term. If no then don't include a term.))
 1. t
-1. t
-1. t
-1. t
-1. t
-1. t
-1. t
+1. Do you want to sort the results column by: (`course_name`, `sis_course_id`, `teacher`, `account_name`)
+1. Do you want the order to be Ascending or Descending? (`asc`, `dsc`)
+1. Do you want to search by course (course name, course code, SIS ID) or by teacher name? (`course`, `teacher`)
 
 ?enrollment_type[]=teacher&enrollment_type[]=student&enrollment_type[]=ta
 
