@@ -28,19 +28,19 @@ Dependant on the use case of the tool. It is decided by the end-user.
 #### Definition of Inputs
 
 The core inputs to the program will answer these questions:
-1. Do you want to only recieve courses with at least one enrollment? (`true`, `false`, `undefined (Don't Filter)`)
-1. Do you want to only have courses that have at least one person enrolled with this specific user role type?: ([`teacher`, `student`, `ta`, `observer`, `designer`], `undefined (Don't Filter)`) (check later: Does this filter add to itself, or filter itself?)
-1. Do you want to filter on published status (`true`,`false`,`undefined (Don't Filter)`)
-1. Do you want to filter on course completion status? (`true`, `false`, `undefined (Don't Filter)`)
-1. Do you want to filter on blueprint courses? (`true`, `false`, `undefined (Don't Filter)`)
+1. Do you want to only recieve courses with at least one enrollment? (`true`, `false`)
+1. Do you want to only have courses that have at least one person enrolled with this specific user role type?: [`teacher`, `student`, `ta`, `observer`, `designer`] (check later: Does this filter add to itself, or filter itself?)
+1. Do you want to filter on published status (`true`,`false`)
+1. Do you want to filter on course completion status? (`true`, `false`)
+1. Do you want to filter on blueprint courses? (`true`, `false`)
+1. Do you want to filter on courses associated with a blueprint course? (`true`, `false`)
+1. Do you want to filter by courses taught by specific teachers? [`Any Teacher ID`, `Any Teacher ID`]
+1. Do you want to filter by courses within subaccounts? [`Any Subaccount ID`,`Any Subaccount ID 2`]
 1. t
 1. t
 1. t
 1. t
-1. t
-1. t
-1. t
-1. t
+1. What information would you like to include with your course data? [`syllabus_body` , `term` , `course_progress` , `storage_quota_used_mb` , `total_students` , `teachers` , `account_name` , `concluded`]
 1. t
 1. t
 1. t
