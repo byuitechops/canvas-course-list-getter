@@ -66,19 +66,57 @@ getFilters(questions)
 
 function nextQuestions(ans){
 
-    ans.filters.map(){
-        return 1;
-    }
-    console.log(ans)
+  
+    var newQuestions = []
+     ans.filters.map(function(a){
+        console.log(a.toString())
+        if (a === "Enrollments"){
+            newQuestions.push(masterQuestions.Enrollments)
+        }
+
+        if (a === "Published"){
+            newQuestions.push(masterQuestions.Published)
+        }
+
+        if (a === "Blueprint")
+        {
+            newQuestions.push(masterQuestions.Blueprint)
+        }
+
+
+
+
+        return newQuestions
+    })
+    console.log(newQuestions.flat())
 }
 
 
 var masterQuestions =   {
-    Enrollments: ['Do you want to only receive courses with at least one enrollment?', 'Do you want to only have courses that have at least one person enrolled with this specific user role type?'],
- 
-    Published: ['Do you want to filter on published status?', 'Do you want to filter on course completion status?' ],
+    Enrollments: {
+        questions: [{
+            message:'Do you want to only receive courses with at least one enrollment?',
+            choices: ['true', 'false'], 
+        },
+        {
+            messages:'Do you want to only have courses that have at least one person enrolled with this specific user role type?',
+            choices: ['teacher', 'student', 'ta', 'observer', 'designer']  
+        }],
+        when: (answers) => globalAnswers.filters.Enrollments === true ? true : false
+        }, 
+    Published: {
+        questions: [{
+            q: "Do you want to filter on published status?",
+            a: ['true', 'false']
+        }]
+    }
+    
+    
+    
+    
+    ['', 'Do you want to filter on course completion status?' ],
     Blueprint:['Do you want to filter on blueprint courses?', 'Do you want to filter on courses associated with a blueprint course?'],
-    Teachers: [],
+    Teachers: ['Do you want to filter by courses taught by specific teachers?'],
     'Sub Accounts': [],
     State: [],
     Include: [],
@@ -87,3 +125,26 @@ var masterQuestions =   {
     'Search By': []
 }
 
+
+if (!Array.prototype.flat) {
+    Array.prototype.flat = function() {
+      var depth = arguments[0];
+      depth = depth === undefined ? 1 : Math.floor(depth);
+      if (depth < 1) return Array.prototype.slice.call(this);
+      return (function flat(arr, depth) {
+        var len = arr.length >>> 0;
+        var flattened = [];
+        var i = 0;
+        while (i < len) {
+          if (i in arr) {
+            var el = arr[i];
+            if (Array.isArray(el) && depth > 0)
+              flattened = flattened.concat(flat(el, depth - 1));
+            else flattened.push(el);
+          }
+          i++;
+        }
+        return flattened;
+      })(this, depth);
+    };
+  }
