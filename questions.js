@@ -43,11 +43,17 @@ module.exports =  [
     choices: ['Yes','No'],
     when: function(answers) {
       return answers.filters.find(ans => ans === 'Enrollments');
+    },
+    filter: function(answer){
+      if (answer === 'Yes'){
+        console.log('My mom')
+        return true;
+      }
     }
   },
   {
     type: 'checkbox',
-    name: 'enrollment type',
+    name: 'enrollment_type',
     message: 'Do you want to only have courses that have at least one person enrolled with this specific user role type?',
     choices: ['Teacher','Student', 'TA', 'Observer', 'Designer'],
     when: function(answers) {
@@ -56,7 +62,7 @@ module.exports =  [
   },
   {
     type: 'list',
-    name: 'published status',
+    name: 'published_status',
     message: 'Do you want to filter on published status?',
     choices: ['Yes', 'No'],
     when: function(answers) {
@@ -65,7 +71,7 @@ module.exports =  [
   },
   {
     type: 'list',
-    name: 'completion status',
+    name: 'completion_status',
     message: 'Do you want to filter on course completion status?',
     choices: ['Yes', 'No'],
     when: function(answers) {
@@ -83,7 +89,7 @@ module.exports =  [
   },
   {
     type: 'list',
-    name: 'blueprint associated',
+    name: 'blueprint_associated',
     message: 'Do you want to filter on courses associated with a blueprint course?',
     choices: ['Yes', 'No'],
     when: function(answers) {
@@ -101,7 +107,7 @@ module.exports =  [
   },
   {
     type: 'list',
-    name: 'sub accounts',
+    name: 'sub_accounts',
     message: 'Do you want to filter by courses within sub accounts?',
     choices: ['WORK WITH AARON ON INPUT TYPE', 'No'],
     when: function(answers) {
@@ -119,7 +125,7 @@ module.exports =  [
   },
   {
     type: 'input',
-    name: 'term id',
+    name: 'term_id',
     message: 'Would you like to filter by enrollment term id?',
     when: function(answers) {
       return answers.filters.find(ans => ans === 'Include');
