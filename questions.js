@@ -1,150 +1,188 @@
-var inquirer = require('inquirer')
-
-var questions = [
-    {
-      name: 'Enrollments'
-    },
-    {
-      name: 'Published'
-    },
-    {
-      name: 'Blueprint'
-    },
-    {
-      name: 'Teachers'
-    },
-    {
-      name: 'Sub Accounts'
-    },
-    {
-      name: 'State'
-    },
-    {
-        name: 'Include'
-    },
-    {
-        name: 'Sort'
-    },
-    {
-        name: 'Order'
-    },
-    {
-        name: 'Search By'
+module.exports =  [
+  {
+    type: 'checkbox',
+    name: 'filters',
+    message: 'What would you like to search for in courses?',
+    choices: [
+      {
+        name: 'Enrollments'
+      },
+      {
+        name: 'Published'
+      },
+      {
+        name: 'Blueprint'
+      },
+      {
+        name: 'Teachers'
+      },
+      {
+        name: 'Sub Accounts'
+      },
+      {
+        name: 'State'
+      },
+      {
+          name: 'Include'
+      },
+      {
+          name: 'Sort'
+      },
+      {
+          name: 'Order'
+      },
+      {
+          name: 'Search By'
+      }
+    ]
+  },
+  {
+    type: 'list',
+    name: 'enrollments',
+    message: 'Do you want to only receive courses with at least one enrollment?',
+    choices: ['Yes','No'],
+    when: function(answers) {
+      return answers.filters.find(ans => ans === 'Enrollments');
     }
-  ]
-
-
-function getFilters(choices){
-
-    inquirer
-      .prompt([
-        {
-          type: 'checkbox',
-          message: 'Select Filters',
-          name: 'filters',
-          choices: choices,
-          validate: function(answer) {
-            if (answer.length < 1) {
-              return 'You must choose at least one Filter.';
-            }
-    
-            return true;
-          }
-        }
-      ])
-      .then(answers => {
-        //console.log(JSON.stringify(answers));
-        nextQuestions(answers);
-    
-      });
-}
-
-
-
-getFilters(questions)
-
-
-function nextQuestions(ans){
-
-  
-    var newQuestions = []
-     ans.filters.map(function(a){
-        console.log(a.toString())
-        if (a === "Enrollments"){
-            newQuestions.push(masterQuestions.Enrollments)
-        }
-
-        if (a === "Published"){
-            newQuestions.push(masterQuestions.Published)
-        }
-
-        if (a === "Blueprint")
-        {
-            newQuestions.push(masterQuestions.Blueprint)
-        }
-
-
-
-
-        return newQuestions
-    })
-    console.log(newQuestions.flat())
-}
-
-
-var masterQuestions =   {
-    Enrollments: {
-        questions: [{
-            message:'Do you want to only receive courses with at least one enrollment?',
-            choices: ['true', 'false'], 
-        },
-        {
-            messages:'Do you want to only have courses that have at least one person enrolled with this specific user role type?',
-            choices: ['teacher', 'student', 'ta', 'observer', 'designer']  
-        }],
-        when: (answers) => globalAnswers.filters.Enrollments === true ? true : false
-        }, 
-    Published: {
-        questions: [{
-            q: "Do you want to filter on published status?",
-            a: ['true', 'false']
-        }]
+  },
+  {
+    type: 'checkbox',
+    name: 'enrollment type',
+    message: 'Do you want to only have courses that have at least one person enrolled with this specific user role type?',
+    choices: ['Teacher','Student', 'TA', 'Observer', 'Designer'],
+    when: function(answers) {
+      return answers.filters.find(ans => ans === 'Enrollments');
     }
-    
-    
-    
-    
-    ['', 'Do you want to filter on course completion status?' ],
-    Blueprint:['Do you want to filter on blueprint courses?', 'Do you want to filter on courses associated with a blueprint course?'],
-    Teachers: ['Do you want to filter by courses taught by specific teachers?'],
-    'Sub Accounts': [],
-    State: [],
-    Include: [],
-    Sort: [],
-    Order: [],
-    'Search By': []
-}
-
-
-if (!Array.prototype.flat) {
-    Array.prototype.flat = function() {
-      var depth = arguments[0];
-      depth = depth === undefined ? 1 : Math.floor(depth);
-      if (depth < 1) return Array.prototype.slice.call(this);
-      return (function flat(arr, depth) {
-        var len = arr.length >>> 0;
-        var flattened = [];
-        var i = 0;
-        while (i < len) {
-          if (i in arr) {
-            var el = arr[i];
-            if (Array.isArray(el) && depth > 0)
-              flattened = flattened.concat(flat(el, depth - 1));
-            else flattened.push(el);
-          }
-          i++;
-        }
-        return flattened;
-      })(this, depth);
-    };
+  },
+  {
+    type: 'list',
+    name: 'published status',
+    message: 'Do you want to filter on published status?',
+    choices: ['Yes', 'No'],
+    when: function(answers) {
+      return answers.filters.find(ans => ans === 'Published');
+    }
+  },
+  {
+    type: 'list',
+    name: 'completion status',
+    message: 'Do you want to filter on course completion status?',
+    choices: ['Yes', 'No'],
+    when: function(answers) {
+      return answers.filters.find(ans => ans === 'Published');
+    }
+  },
+  {
+    type: 'list',
+    name: 'blueprint',
+    message: 'Do you want to filter on blueprint courses?',
+    choices: ['Yes', 'No'],
+    when: function(answers) {
+      return answers.filters.find(ans => ans === 'Blueprint');
+    }
+  },
+  {
+    type: 'list',
+    name: 'blueprint associated',
+    message: 'Do you want to filter on courses associated with a blueprint course?',
+    choices: ['Yes', 'No'],
+    when: function(answers) {
+      return answers.filters.find(ans => ans === 'Blueprint');
+    }
+  },
+  {
+    type: 'list',
+    name: 'teacher',
+    message: 'Do you want to filter by courses taught by specific teachers?',
+    choices: ['WORK WITH AARON ON INPUT TYPE', 'No'],
+    when: function(answers) {
+      return answers.filters.find(ans => ans === 'Teachers');
+    }
+  },
+  {
+    type: 'list',
+    name: 'sub accounts',
+    message: 'Do you want to filter by courses within sub accounts?',
+    choices: ['WORK WITH AARON ON INPUT TYPE', 'No'],
+    when: function(answers) {
+      return answers.filters.find(ans => ans === 'Sub Accounts');
+    }
+  },
+  {
+    type: 'list',
+    name: 'state',
+    message: 'Which course state do you want to filter on?',
+    choices: ['Created', 'Claimed', 'Available', 'Completed', 'Deleted', 'All'],
+    when: function(answers) {
+      return answers.filters.find(ans => ans === 'State');
+    }
+  },
+  {
+    type: 'input',
+    name: 'term id',
+    message: 'Would you like to filter by enrollment term id?',
+    when: function(answers) {
+      return answers.filters.find(ans => ans === 'Include');
+    }
+  },
+  {
+    type: 'list',
+    name: 'search_term',
+    message: 'Do you want to include a search term?',
+    choices: ['Yes', 'No'],
+    when: function(answers){
+      return answers.filters.find(ans => ans === 'Include')
+    }  
+  },
+  {
+    type: 'input',
+    name: 'search_term',
+    message: "Okay, what is your search term?",
+    when: function(answers){
+      return answers.search_term === 'Yes';
+    }
+  },
+  {
+    type: 'list',
+    name: 'information',
+    message: 'What information would you like to include with your course data?',
+    choices: ['Syllabus Body', 'Term', 'Course Progress', 'Storage', 'Total Students', 'Teachers', 'Account Name',
+              'Concluded'],
+    when: function(answers){
+      return answers.filters.find(ans => ans === 'Include')
+    }
+  },
+  {
+    type: 'list',
+    name: 'sort',
+    message: 'How would you like to sort the results column by?',
+    choices: ['Course Name', 'SIS ID', 'Teacher', 'Account Name'],
+    when: function(answers){
+      return answers.filters.find(ans => ans === 'Sort')
+    }
+  },
+  {
+    type: 'list',
+    name: 'order',
+    message: 'Do you want the order to be Ascending or Descending?',
+    choices: ['Ascending', 'Descending'],
+    when: function(answers){
+      return answers.filters.find(ans => ans === 'Order')
+    }
+  },
+  {
+    type: 'list',
+    name: 'search_by',
+    choices: ['Course', 'Teacher'],
+    when: function(answers){
+      return answers.filters.find(ans => ans === 'Search By')
+    }
+  },
+  {
+    type: 'list',
+    name: 'Output',
+    message: 'How would you like to output this data?',
+    choices: ['Node Module', 'CSV', 'JSON', 'Console']
   }
+
+];
