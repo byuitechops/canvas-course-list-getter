@@ -58,7 +58,7 @@ var questions = [{
         }
     },
     {
-        type: 'checkbox',
+        type: 'list',
         name: 'enrollment_type',
         message: 'Do you want to only have courses that have at least one person enrolled with this specific user role type?',
         choices: ['teacher', 'student', 'ta', 'observer', 'designer'],
