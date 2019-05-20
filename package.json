@@ -1,0 +1,23 @@
+{
+  "name": "canvas-course-list-getter",
+  "version": "1.0.0",
+  "description": "A way to get a liste of courses based on filter parameters",
+  "main": "prompt.js",
+  "dependencies": {
+    "inquirer": "^6.3.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/byuitechops/canvas-course-list-getter.git"
+  },
+  "author": "Cameron Thompson",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/byuitechops/canvas-course-list-getter/issues"
+  },
+  "homepage": "https://github.com/byuitechops/canvas-course-list-getter#readme"
+}
