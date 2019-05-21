@@ -47,7 +47,7 @@ var with_enrollments = {
 }
 
 var enrollment_type ={
-  type: 'list',
+  type: 'checkbox',
   name: 'enrollment_type',
   message: 'Do you want to only have courses that have at least one person enrolled with this specific user role type?',
   choices: ['teacher', 'student', 'ta', 'observer', 'designer'],
@@ -128,7 +128,7 @@ var blueprint_associated= {
 }
 
 var by_teachers = {
-  type: 'list',
+  type: 'checkbox',
   name: 'by_teacher',
   message: 'Do you want to filter by courses taught by specific teachers?',
   choices: ['WORK WITH AARON ON INPUT TYPE', 'No'],
@@ -144,6 +144,14 @@ var by_subaccounts = {
   choices: sub_accounts_choices,
   when: function (answers) {
       return answers.filters.find(ans => ans === 'Sub Accounts');
+  }, 
+  filter: function(answer){
+    var ids = answer.map(ans => {
+      var numbers = []
+      numbers.push(ans.match(/\d+/g))
+      return numbers.toString();
+    })
+    return ids; 
   }
 }
 var state = {
@@ -155,13 +163,15 @@ var state = {
       return answers.filters.find(ans => ans === 'State');
   },
   filter: function(answer){
-    return answer.toLowerCase()
+    return answer.map(a => {
+      return a.toLowerCase()
+    })
   }
 }
 
 var enrollment_term_id_q = {
   type: 'list',
-  name: 'term_id_q',
+  name: 'enrollment_term_id',
   message: 'Would you like to filter by enrollment term id?',
   choices: ['Yes', 'No'],
   when: function (answers) {
@@ -174,13 +184,13 @@ var enrollment_term_id = {
   name: 'enrollment_term_id',
   message: 'Okay. What is the term ID?',
   when: function (answers) {
-      return answers.term_id_q === 'Yes'
+      return answers.enrollment_term_id === 'Yes'
   }
 }
 
 var search_term_q = {
   type: 'list',
-  name: 'search_term_q',
+  name: 'search_term',
   message: 'Do you want to include a search term?',
   choices: ['Yes', 'No'],
   when: function (answers) {
@@ -193,12 +203,12 @@ var search_term = {
   name: 'search_term',
   message: "Okay, what is your search term?",
   when: function (answers) {
-      return answers.search_term_q === 'Yes';
+      return answers.search_term === 'Yes';
   }
 }
 
 var include = {
-  type: 'list',
+  type: 'checkbox',
   name: 'include',
   message: 'What information would you like to include with your course data?',
   choices: ['Syllabus Body', 'Term', 'Course Progress', 'Storage', 'Total Students', 'Teachers', 'Account Name',
@@ -206,6 +216,11 @@ var include = {
   ],
   when: function (answers) {
       return answers.filters.find(ans => ans === 'Include')
+  }, 
+  filter: function(answer){
+    return answer.map(ans => {
+      return ans.toLowerCase().replace(' ','_')
+    })
   }
 }
 
@@ -216,6 +231,9 @@ var sort = {
   choices: ['Course Name', 'SIS ID', 'Teacher', 'Account Name'],
   when: function (answers) {
       return answers.filters.find(ans => ans === 'Sort')
+  }, 
+  filter: function(answer){
+    return answer.toLowerCase().replace(' ','_')
   }
 }
 
@@ -226,6 +244,13 @@ var order = {
   choices: ['Ascending', 'Descending'],
   when: function (answers) {
       return answers.filters.find(ans => ans === 'Order')
+  }, 
+  filter: function(answer){
+    if (answer === 'Ascending'){
+      return 'asc'
+    } else if (answer === 'Descending'){
+      return 'desc'
+    }
   }
 }
 
@@ -235,6 +260,9 @@ var search_by = {
   choices: ['Course', 'Teacher'],
   when: function (answers) {
       return answers.filters.find(ans => ans === 'Search By')
+  },
+  filter: function(answer){
+    return answer.toLowerCase()
   }
 }
 
@@ -268,3 +296,5 @@ var questions = [
 ]
 
 module.exports = questions;
+
+
