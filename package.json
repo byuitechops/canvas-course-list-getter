@@ -1,7 +1,7 @@
 {
   "name": "canvas-course-list-getter",
   "version": "1.0.0",
-  "description": "A way to get a liste of courses based on filter parameters",
+  "description": "A way to get a list of courses based on filter parameters",
   "main": "prompt.js",
   "dependencies": {
     "inquirer": "^6.3.1"

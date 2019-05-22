@@ -1,75 +1,108 @@
 const inquirer = require('inquirer');
 const query_string = require('query-string')
-const canvas = require('canvas-api-wrapper');
 const questions = require('./questions')
+const canvas = require('canvas-api-wrapper');
 var fs = require('fs');
 var d3 = require('d3-dsv')
 
-var arrayFormat = {arrayFormat: 'bracket'}
+/************************************************************************
+ * @author Cameron Thompson
+ * 
+ * This function calls the inquirer prompt function with the question
+ * object being passed in. This function will take the answers from 
+ * the questions and will take off the filters and output options so 
+ * those don't get turned into a query. This function will make a query
+ * string based on the questions and will call the makeAPICall() function
+ * with the query string then will take those results and pass them into
+ * the makeOutput() function to generate the output specified by the user. 
+ * 
+ **************************************************************************/
+function promptUser() {
+    inquirer.prompt(questions).then(async answers => {
 
-inquirer.prompt(questions).then(async answers => {
-/*     console.log(JSON.stringify(answers, null, '  '));
-    console.log(
-        "\n"+
-        "       __|__\n"+
-        "--@--@--(_)--@--@--\n") 
- */
-    var newAnswers = [];
-    var output = answers.Output;
-    newAnswers.push(answers);
- /*    console.log(newAnswers)
-    console.log(
-        "\n"+
-        "       __|__\n"+
-        "--@--@--(_)--@--@--\n")   */
-
-    delete answers.filters
-    delete answers.Output
-    //
-/*     console.log(answers)
-    console.log(
-        "\n"+
-        "       __|__\n"+
-        "--@--@--(_)--@--@--\n")   */
-
-    
-    var stringified = query_string.stringify(answers, {arrayFormat: 'bracket'});
-     console.log(stringified) 
-    /*console.log(
-        "\n"+
-        "       __|__\n"+
-        "--@--@--(_)--@--@--\n") 
-
-    const parse = query_string.parseUrl('https://byui.instructure.com/api/v1/accounts/1/courses?'+stringified);
-    console.log(parse) */
-
-    console.log(output)
+        var newAnswers = [];
+        var output = answers.Output;
+        newAnswers.push(answers);
 
 
+        // Deleting these so they don't go into the query string
+        delete answers.filters
+        delete answers.Output
 
-    const results = await canvas.get('/api/v1/accounts/1/courses?'+ stringified)
-    
-    if (output === 'Node Module'){
+
+        // MAKE THE QUERY STRING!
+        var stringifiedQuery = query_string.stringify(answers, {
+            arrayFormat: 'bracket' // This is for the brackets of the query string
+        });
+        //console.log(stringifiedQuery)
+
+
+        console.log(`Getting your results in ${output} format! This should take a moment.`)
+
+        const results = await makeAPICall(stringifiedQuery)
+        // Generate the output based on the users selection
+        makeOutput(output, results)
+
+
+    }).catch(console.log)
+}
+
+
+/************************************************************************
+ * Makes an api call to Canvas with the query string passed in
+ * 
+ * @author Cameron Thompson
+ * @param {string} stringifiedQuery Make sure this is a string of a query
+ * @returns {Array} An array of course JSON objects
+ **************************************************************************/
+async function makeAPICall(stringifiedQuery) {
+    var courses = await canvas.get('/api/v1/accounts/1/courses?' + stringifiedQuery)
+
+    return courses
+}
+
+/*************************************************************************
+ * 
+ * @author Cameron Thompson
+ * @param {string} output A string from the answer set by the user
+ * @param {Array} results An array of course JSON objects
+ * 
+ * @returns If the output is 'Node Module', then it will return the 
+ * results. If no output was set, this function will return the results
+ * passed in. Otherwise, this function will return nothing. 
+ * 
+ **************************************************************************/
+function makeOutput(output, results) {
+    if (output === 'Node Module') {
+        console.log("Complete \\\(ˆ˚ˆ)/")
+        return results;
 
     } else if (output === 'CSV') {
-        var courses = d3.csvFormat(results)
-        fs.writeFile("./courses.csv", courses, function(err) {
-            if (err) console.log(err);
-                console.log('complete :D');
-            }
-          );
+        if (results === '[]'){
+            console.log("NO COURSES FOR SELECTED FILTERS")
+        }
+        else{
+            var courses = d3.csvFormat(results)
+            fs.writeFile("./courses.csv", courses, function (err) {
+                if (err) console.log(err);
+                console.log('Complete \\\(ˆ˚ˆ)/');
+            });
+        }
     } else if (output === 'JSON') {
 
         var courses = JSON.stringify(results)
-        fs.writeFile("./courses.json", courses, function(err) {
+        fs.writeFile("./courses.json", courses, function (err) {
             if (err) console.log(err);
-                console.log('complete :D');
-            }
-          );
+            console.log('Complete \\\(ˆ˚ˆ)/');
+        });
 
     } else if (output === 'Console') {
+        console.log('Complete \\\(ˆ˚ˆ)/');
         console.log(results)
+    } else {
+        return results;
     }
 
-    
-}).catch(console.log)
+}
+
+promptUser()
