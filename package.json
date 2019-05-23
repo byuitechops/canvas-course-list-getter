@@ -4,9 +4,12 @@
   "description": "A way to get a list of courses based on filter parameters",
   "main": "prompt.js",
   "dependencies": {
+    "canvas-api-wrapper": "^3.3.5",
+    "d3-dsv": "^1.1.1",
     "fuzzy": "^0.1.3",
     "inquirer": "^6.3.1",
-    "inquirer-autocomplete-prompt": "^1.0.1"
+    "inquirer-autocomplete-prompt": "^1.0.1",
+    "query-string": "^6.5.0"
   },
   "devDependencies": {},
   "scripts": {
