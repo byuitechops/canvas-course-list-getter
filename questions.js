@@ -1,8 +1,9 @@
 const sub_accounts_choices = require('./sub_accounts')
-const get_teachers = require('./get_teachers')
-const prompt = require('inquirer')
 var fs = require('fs');
 const canvas = require('canvas-api-wrapper');
+const configs = require('./config')
+
+
 
 
 var start_questions = {
@@ -11,26 +12,32 @@ var start_questions = {
   message: 'What would you like to search for in courses?',
   choices: ['Enrollments',
 
-      'Published',
+    'Published',
 
-      'Blueprint',
+    'Blueprint',
 
-      'Teachers',
+    'Teachers',
 
-      'Sub Accounts',
+    'Sub Accounts',
 
-      'State',
+    'State',
 
-      'Include',
+    'Include',
 
-      'Sort',
+    'Sort',
 
-      'Order',
+    'Order',
 
-      'Search By'
+    'Search By'
 
   ],
-  validate: function(answer) {
+  when: function (answers) {
+    if (configs.dont_asks.find(fil => fil === 'filters')) {
+      answers.filters = configs.defaults.filters
+      return false;
+    }
+  },
+  validate: function (answer) {
     if (answer.length < 1) {
       return 'You must choose at least one filter';
     }
@@ -45,25 +52,33 @@ var with_enrollments = {
   message: 'Do you want to only receive courses with at least one enrollment?',
   choices: ['Yes', 'No'],
   when: function (answers) {
-      return answers.filters.find(ans => ans === 'Enrollments');
+
+    if (answers.filters.find(ans => ans === 'Enrollments')) {
+      return true;
+    } else if (configs.defaults.filters.find(fil => fil === 'Enrollments')) {
+      return true;
+    } else {
+      return false;
+    }
+
   },
-  filter: function(answer){
-    if (answer === "Yes"){
+  filter: function (answer) {
+    if (answer === "Yes") {
       answer = true
     } else if (answer === 'No') {
       answer = false
     }
-    return answer 
+    return answer
   }
 }
 
-var enrollment_type ={
+var enrollment_type = {
   type: 'checkbox',
   name: 'enrollment_type',
   message: 'Do you want to only have courses that have at least one person enrolled with this specific user role type?',
   choices: ['teacher', 'student', 'ta', 'observer', 'designer'],
   when: function (answers) {
-      return answers.filters.find(ans => ans === 'Enrollments');
+    return answers.filters.find(ans => ans === 'Enrollments');
   }
 }
 
@@ -73,15 +88,15 @@ var published = {
   message: 'Do you want to filter on published status?',
   choices: ['Yes', 'No'],
   when: function (answers) {
-      return answers.filters.find(ans => ans === 'Published');
+    return answers.filters.find(ans => ans === 'Published');
   },
-  filter: function(answer){
-    if (answer === "Yes"){
+  filter: function (answer) {
+    if (answer === "Yes") {
       answer = true
     } else if (answer === 'No') {
       answer = false
     }
-    return answer 
+    return answer
   }
 }
 var completion = {
@@ -90,15 +105,15 @@ var completion = {
   message: 'Do you want to filter on course completion status?',
   choices: ['Yes', 'No'],
   when: function (answers) {
-      return answers.filters.find(ans => ans === 'Published');
+    return answers.filters.find(ans => ans === 'Published');
   },
-  filter: function(answer){
-    if (answer === "Yes"){
+  filter: function (answer) {
+    if (answer === "Yes") {
       answer = true
     } else if (answer === 'No') {
       answer = false
     }
-    return answer 
+    return answer
   }
 }
 
@@ -108,33 +123,33 @@ var blueprint = {
   message: 'Do you want to filter on blueprint courses?',
   choices: ['Yes', 'No'],
   when: function (answers) {
-      return answers.filters.find(ans => ans === 'Blueprint');
+    return answers.filters.find(ans => ans === 'Blueprint');
   },
-  filter: function(answer){
-    if (answer === "Yes"){
+  filter: function (answer) {
+    if (answer === "Yes") {
       answer = true
     } else if (answer === 'No') {
       answer = false
     }
-    return answer 
+    return answer
   }
 }
 
-var blueprint_associated= {
+var blueprint_associated = {
   type: 'list',
   name: 'blueprint_associated',
   message: 'Do you want to filter on courses associated with a blueprint course?',
   choices: ['Yes', 'No'],
   when: function (answers) {
-      return answers.filters.find(ans => ans === 'Blueprint');
+    return answers.filters.find(ans => ans === 'Blueprint');
   },
-  filter: function(answer){
-    if (answer === "Yes"){
+  filter: function (answer) {
+    if (answer === "Yes") {
       answer = true
     } else if (answer === 'No') {
       answer = false
     }
-    return answer 
+    return answer
   }
 }
 
@@ -142,8 +157,9 @@ var teacher_api_search = {
   type: 'input',
   name: 'teacher_api_search',
   message: 'Enter teacher names, separated by a `|` character',
+  default: configs.defaults.by_teachers,
   when: function (answers) {
-      return answers.filters.find(ans => ans === 'Teachers');
+    return answers.filters.find(ans => ans === 'Teachers');
   },
   filter: (answer) => {
     var teachers = answer.split('|');
@@ -173,14 +189,14 @@ var by_teachers = {
     return allTeachers;
   },
   when: function (answers) {
-      return answers.filters.find(ans => ans === 'Teachers');
+    return answers.filters.find(ans => ans === 'Teachers');
   },
   filter: (answer) => {
     let teacherIdRegex = /\[(\d+)\]/;
     var teacherIds = answer.map(ans => {
       return ans.match(teacherIdRegex)[1];
     })
-    fs.writeFileSync ('test.txt', JSON.stringify(teacherIds, null, 4))
+    fs.writeFileSync('test.txt', JSON.stringify(teacherIds, null, 4))
     return teacherIds;
   }
 
@@ -193,14 +209,15 @@ var by_subaccounts = {
   message: 'Do you want to filter by courses within sub accounts?',
   choices: sub_accounts_choices,
   when: function (answers) {
-      return answers.filters.find(ans => ans === 'Sub Accounts');
-  }, 
-  filter: async function(answer){
-    answer.map(ans => {
+    return answers.filters.find(ans => ans === 'Sub Accounts');
+  },
+  filter: async function (answer) {
+    let ids = answer.map(ans => {
       var numbers = []
       numbers.push(ans.match(/\d+/g))
       return numbers.toString();
     })
+    return ids;
   }
 }
 var state = {
@@ -209,9 +226,9 @@ var state = {
   message: 'Which course state do you want to filter on?',
   choices: ['Created', 'Claimed', 'Available', 'Completed', 'Deleted', 'All'],
   when: function (answers) {
-      return answers.filters.find(ans => ans === 'State');
+    return answers.filters.find(ans => ans === 'State');
   },
-  filter: function(answer){
+  filter: function (answer) {
     return answer.map(a => {
       return a.toLowerCase()
     })
@@ -224,7 +241,7 @@ var enrollment_term_id_q = {
   message: 'Would you like to filter by enrollment term id?',
   choices: ['Yes', 'No'],
   when: function (answers) {
-      return answers.filters.find(ans => ans === 'Include');
+    return answers.filters.find(ans => ans === 'Include');
   }
 }
 
@@ -233,7 +250,7 @@ var enrollment_term_id = {
   name: 'enrollment_term_id',
   message: 'Okay. What is the term ID?',
   when: function (answers) {
-      return answers.enrollment_term_id === 'Yes'
+    return answers.enrollment_term_id === 'Yes'
   }
 }
 
@@ -243,7 +260,7 @@ var search_term_q = {
   message: 'Do you want to include a search term?',
   choices: ['Yes', 'No'],
   when: function (answers) {
-      return answers.filters.find(ans => ans === 'Include')
+    return answers.filters.find(ans => ans === 'Include')
   }
 }
 
@@ -252,7 +269,7 @@ var search_term = {
   name: 'search_term',
   message: "Okay, what is your search term?",
   when: function (answers) {
-      return answers.search_term === 'Yes';
+    return answers.search_term === 'Yes';
   }
 }
 
@@ -261,14 +278,14 @@ var include = {
   name: 'include',
   message: 'What information would you like to include with your course data?',
   choices: ['Syllabus Body', 'Term', 'Course Progress', 'Storage', 'Total Students', 'Teachers', 'Account Name',
-      'Concluded'
+    'Concluded'
   ],
   when: function (answers) {
-      return answers.filters.find(ans => ans === 'Include')
-  }, 
-  filter: function(answer){
+    return answers.filters.find(ans => ans === 'Include')
+  },
+  filter: function (answer) {
     return answer.map(ans => {
-      return ans.toLowerCase().replace(' ','_')
+      return ans.toLowerCase().replace(' ', '_')
     })
   }
 }
@@ -279,10 +296,10 @@ var sort = {
   message: 'How would you like to sort the results column by?',
   choices: ['Course Name', 'SIS ID', 'Teacher', 'Account Name'],
   when: function (answers) {
-      return answers.filters.find(ans => ans === 'Sort')
-  }, 
-  filter: function(answer){
-    return answer.toLowerCase().replace(' ','_')
+    return answers.filters.find(ans => ans === 'Sort')
+  },
+  filter: function (answer) {
+    return answer.toLowerCase().replace(' ', '_')
   }
 }
 
@@ -292,12 +309,12 @@ var order = {
   message: 'Do you want the order to be Ascending or Descending?',
   choices: ['Ascending', 'Descending'],
   when: function (answers) {
-      return answers.filters.find(ans => ans === 'Order')
-  }, 
-  filter: function(answer){
-    if (answer === 'Ascending'){
+    return answers.filters.find(ans => ans === 'Order')
+  },
+  filter: function (answer) {
+    if (answer === 'Ascending') {
       return 'asc'
-    } else if (answer === 'Descending'){
+    } else if (answer === 'Descending') {
       return 'desc'
     }
   }
@@ -308,9 +325,9 @@ var search_by = {
   name: 'search_by',
   choices: ['Course', 'Teacher'],
   when: function (answers) {
-      return answers.filters.find(ans => ans === 'Search By')
+    return answers.filters.find(ans => ans === 'Search By')
   },
-  filter: function(answer){
+  filter: function (answer) {
     return answer.toLowerCase()
   }
 }
@@ -347,5 +364,3 @@ var questions = [
 ]
 
 module.exports = questions;
-
-
