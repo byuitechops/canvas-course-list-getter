@@ -5,6 +5,27 @@ const configs = require('./config')
 
 
 
+modifyQuestions() {
+  function setDefaults () {
+    try {
+      if (configs.defaults === undefined)
+        return;
+    } catch (e) {
+      return;
+    }
+    Object.keys(configs.defaults).forEach(defKey => {
+      if (Array.isArray(configs.defaults[defKey]))
+  /* Check how to set up multiple select questions answers */
+      questions[defKey].default = configs.defaults[defKey]
+    });
+  }
+  
+  function setValues () {/**Build an object that will use the Configs Ansers and the users answers to build final answer array. Check for undefined answers. Configs isnt defind, then configs.default will throw  */}
+  
+  function setDoAsks () {/*From condig.doAsks, choose the questions that need to be asked to the user based on T or F */}
+
+  function updateStartQuestions () {/*From previous functions, update the choices array*/}
+}
 
 var start_questions = {
   type: 'checkbox',
@@ -162,7 +183,7 @@ var teacher_api_search = {
     return answers.filters.find(ans => ans === 'Teachers');
   },
   filter: (answer) => {
-    var teachers = answer.split('|');
+    var teachers = answer.split(',');
     teachers = teachers.map((teacher) => {
       return teacher.trim();
     });
@@ -208,6 +229,7 @@ var by_subaccounts = {
   name: 'by_subaccounts',
   message: 'Do you want to filter by courses within sub accounts?',
   choices: sub_accounts_choices,
+  default: configs.defaults.by_subaccounts,
   when: function (answers) {
     return answers.filters.find(ans => ans === 'Sub Accounts');
   },
@@ -340,7 +362,7 @@ var output = {
   default: 'Node Module'
 }
 
-var questions = [
+var questions = {
   start_questions,
   with_enrollments,
   enrollment_type,
@@ -361,6 +383,8 @@ var questions = [
   order,
   search_by,
   output
-]
+}
 
-module.exports = questions;
+var questionsArray = Object.keys(questions).map(questionKey => questions[questionKey])
+
+module.exports = questionsArray;
