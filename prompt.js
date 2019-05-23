@@ -17,8 +17,8 @@ var d3 = require('d3-dsv')
  * the makeOutput() function to generate the output specified by the user. 
  * 
  **************************************************************************/
-function promptUser() {
-    inquirer.prompt(questions).then(async answers => {
+async function promptUser() {
+    return await inquirer.prompt(questions).then(async answers => {
 
         var newAnswers = [];
         var output = answers.Output;
@@ -31,20 +31,31 @@ function promptUser() {
 
 
         // MAKE THE QUERY STRING!
-        var stringifiedQuery = query_string.stringify(answers, {
-            arrayFormat: 'bracket' // This is for the brackets of the query string
-        });
-        //console.log(stringifiedQuery)
-
-
+        var stringifiedQuery = makeQuery(answers)  
         console.log(`Getting your results in ${output} format! This should take a moment.`)
 
         const results = await makeAPICall(stringifiedQuery)
         // Generate the output based on the users selection
         makeOutput(output, results)
 
+        return results
 
     }).catch(console.log)
+}
+
+/**
+ * 
+ * @author Cameron Thompson
+ * @param {JSON} answers The JSON answers object
+ *
+ * 
+ */
+function makeQuery(answers){
+    var stringifiedQuery = query_string.stringify(answers, {
+        arrayFormat: 'bracket' // This is for the brackets of the query string
+    });
+
+    return stringifiedQuery;
 }
 
 
@@ -56,6 +67,7 @@ function promptUser() {
  * @returns {Array} An array of course JSON objects
  **************************************************************************/
 async function makeAPICall(stringifiedQuery) {
+    console.log("+++++++++++++++++++++++++++++"+stringifiedQuery)
     var courses = await canvas.get('/api/v1/accounts/1/courses?' + stringifiedQuery)
 
     return courses
@@ -99,10 +111,11 @@ function makeOutput(output, results) {
     } else if (output === 'Console') {
         console.log('Complete \\\(ˆ˚ˆ)/');
         console.log(results)
-    } else {
-        return results;
-    }
+    } 
+        
+    return results;
+
 
 }
 
-promptUser()
+module.exports = promptUser

@@ -1,4 +1,8 @@
 const sub_accounts_choices = require('./sub_accounts')
+const get_teachers = require('./get_teachers')
+const prompt = require('inquirer')
+var fs = require('fs');
+const canvas = require('canvas-api-wrapper');
 
 
 var start_questions = {
@@ -25,7 +29,14 @@ var start_questions = {
 
       'Search By'
 
-  ]
+  ],
+  validate: function(answer) {
+    if (answer.length < 1) {
+      return 'You must choose at least one filter';
+    }
+
+    return true;
+  }
 }
 
 var with_enrollments = {
@@ -127,15 +138,54 @@ var blueprint_associated= {
   }
 }
 
-var by_teachers = {
-  type: 'checkbox',
-  name: 'by_teacher',
-  message: 'Do you want to filter by courses taught by specific teachers?',
-  choices: ['WORK WITH AARON ON INPUT TYPE', 'No'],
+var teacher_api_search = {
+  type: 'input',
+  name: 'teacher_api_search',
+  message: 'Enter teacher names, separated by a `|` character',
   when: function (answers) {
       return answers.filters.find(ans => ans === 'Teachers');
+  },
+  filter: (answer) => {
+    var teachers = answer.split('|');
+    teachers = teachers.map((teacher) => {
+      return teacher.trim();
+    });
+    return teachers;
   }
 }
+
+var by_teachers = {
+  type: 'checkbox',
+  name: 'by_teachers',
+  message: 'Do you want to filter by courses taught by specific teachers?',
+  choices: async (answers) => {
+    let allTeachers = [];
+    for (let teacher in answers.teacher_api_search) {
+      allTeachers = allTeachers.concat(await canvas.get(`/api/v1/accounts/1/users?search_term=${answers.teacher_api_search[teacher]}&include[]=email&role_filter_id=4`))
+    }
+    delete answers.teacher_api_search;
+    allTeachers = allTeachers.map((teacher) => {
+      return {
+        name: `${teacher.name} (${teacher.email || 'Can\'t Retrieve Email'}) [${teacher.id}]`,
+        id: teacher.id
+      }
+    });
+    return allTeachers;
+  },
+  when: function (answers) {
+      return answers.filters.find(ans => ans === 'Teachers');
+  },
+  filter: (answer) => {
+    let teacherIdRegex = /\[(\d+)\]/;
+    var teacherIds = answer.map(ans => {
+      return ans.match(teacherIdRegex)[1];
+    })
+    fs.writeFileSync ('test.txt', JSON.stringify(teacherIds, null, 4))
+    return teacherIds;
+  }
+
+}
+
 
 var by_subaccounts = {
   type: 'checkbox',
@@ -145,13 +195,12 @@ var by_subaccounts = {
   when: function (answers) {
       return answers.filters.find(ans => ans === 'Sub Accounts');
   }, 
-  filter: function(answer){
-    var ids = answer.map(ans => {
+  filter: async function(answer){
+    answer.map(ans => {
       var numbers = []
       numbers.push(ans.match(/\d+/g))
       return numbers.toString();
     })
-    return ids; 
   }
 }
 var state = {
@@ -270,7 +319,8 @@ var output = {
   type: 'list',
   name: 'Output',
   message: 'How would you like to output this data?',
-  choices: ['Node Module', 'CSV', 'JSON', 'Console']
+  choices: ['Node Module', 'CSV', 'JSON', 'Console'],
+  default: 'Node Module'
 }
 
 var questions = [
@@ -281,6 +331,7 @@ var questions = [
   completion,
   blueprint,
   blueprint_associated,
+  teacher_api_search,
   by_teachers,
   by_subaccounts,
   state,
