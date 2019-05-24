@@ -5,28 +5,6 @@ const configs = require('./config')
 
 
 
-modifyQuestions() {
-  function setDefaults () {
-    try {
-      if (configs.defaults === undefined)
-        return;
-    } catch (e) {
-      return;
-    }
-    Object.keys(configs.defaults).forEach(defKey => {
-      if (Array.isArray(configs.defaults[defKey]))
-  /* Check how to set up multiple select questions answers */
-      questions[defKey].default = configs.defaults[defKey]
-    });
-  }
-  
-  function setValues () {/**Build an object that will use the Configs Ansers and the users answers to build final answer array. Check for undefined answers. Configs isnt defind, then configs.default will throw  */}
-  
-  function setDoAsks () {/*From condig.doAsks, choose the questions that need to be asked to the user based on T or F */}
-
-  function updateStartQuestions () {/*From previous functions, update the choices array*/}
-}
-
 var start_questions = {
   type: 'checkbox',
   name: 'filters',
@@ -178,7 +156,6 @@ var teacher_api_search = {
   type: 'input',
   name: 'teacher_api_search',
   message: 'Enter teacher names, separated by a `|` character',
-  default: configs.defaults.by_teachers,
   when: function (answers) {
     return answers.filters.find(ans => ans === 'Teachers');
   },
@@ -229,7 +206,6 @@ var by_subaccounts = {
   name: 'by_subaccounts',
   message: 'Do you want to filter by courses within sub accounts?',
   choices: sub_accounts_choices,
-  default: configs.defaults.by_subaccounts,
   when: function (answers) {
     return answers.filters.find(ans => ans === 'Sub Accounts');
   },
@@ -385,6 +361,41 @@ var questions = {
   output
 }
 
+
+function overrideWhen (object, value) {
+  // loop through object keys. Keys should correspond with the keys of question object
+  // set the 'when' key of the corresponding question object with variable value
+
+ /*  console.log(Object.keys(object))
+  console.log(
+    "\n"+
+    "       __|__\n"+
+    "--@--@--(_)--@--@--\n") 
+  console.log(Object.keys(questions))
+
+  Object.keys(questions) */
+
+  Object.keys(object).forEach(obj =>{
+
+
+
+  
+  })
+
+
+}
+
+
+
+function setDefaultValues (object) {
+  // questions not asked basically set the when to false. 
+}
+
+overrideWhen(configs.defaults, true)
+//overrideWhen(configs.values, false)
+
 var questionsArray = Object.keys(questions).map(questionKey => questions[questionKey])
+
+
 
 module.exports = questionsArray;
