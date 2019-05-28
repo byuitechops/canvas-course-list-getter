@@ -5,6 +5,6 @@ module.exports = {
         by_subaccounts: ['Devotional (id: 96)', 'Sandbox (id: 8)']
     },
     values: {
-        with_enrollment: "Yes"
+        with_enrollment: true,
     }
 }

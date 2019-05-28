@@ -454,7 +454,7 @@ function overrideWhen (object, value) {
   // loop through object keys. Keys should correspond with the keys of question object
   // set the 'when' key of the corresponding question object with variable value
 
-/*object.filters.forEach(filter => {
+  /*object.filters.forEach(filter => {
       start_question_choices.forEach(question =>{
         if(question.name === filter){
           question.checked = true
@@ -465,7 +465,7 @@ function overrideWhen (object, value) {
     var questions_to_ask = Object.keys(object)
 
     questions_to_ask.map(question =>{
-      console.log(question)
+      //console.log(question)
       if (question === 'by_teachers'){
         questions.teacher_api_search.when = value
         questions.by_teachers.when = value
@@ -481,15 +481,18 @@ function overrideWhen (object, value) {
 
 function setDefaultValues (object) {
   // questions not asked basically set the when to false.
-  
-  console.log(answers)
+  return answers = object
 }
 
 overrideWhen(configs.defaults, true)
 //overrideWhen(configs.values, false)
-setDefaultValues(configs.values)
+var defaultAns = setDefaultValues(configs.values)
+console.log(defaultAns)
 var questionsArray = Object.keys(questions).map(questionKey => questions[questionKey])
 
 
 
-module.exports = questionsArray;
+module.exports = {
+  questionsArray,
+  defaultAns
+};
