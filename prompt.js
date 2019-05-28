@@ -67,7 +67,8 @@ function makeQuery(answers){
  * @returns {Array} An array of course JSON objects
  **************************************************************************/
 async function makeAPICall(stringifiedQuery) {
-    console.log("+++++++++++++++++++++++++++++"+stringifiedQuery)
+    // Used for debugging shenanigans 
+    //console.log("+++++++++++++++++++++++++++++"+stringifiedQuery)
     var courses = await canvas.get('/api/v1/accounts/1/courses?' + stringifiedQuery)
 
     return courses

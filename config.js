@@ -1,9 +1,10 @@
 module.exports = {
     defaults: {
-        filters: ["Teachers","Sub Accounts"],
+        enrollment_type: 'teacher',
         by_teachers: ["Cameron", "Aaron"],
         by_subaccounts: ['Devotional (id: 96)', 'Sandbox (id: 8)']
     },
-    values: 'Apple',
-    dont_asks: ["filters"]
+    values: {
+        with_enrollment: "Yes"
+    }
 }
