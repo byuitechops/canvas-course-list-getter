@@ -20,11 +20,14 @@ var d3 = require('d3-dsv')
 async function promptUser() {
     return await inquirer.prompt(questions.questionsArray).then(async answers => {
 
+        if(!questions.defaultAns === undefined){
+            answers = Object.assign(questions.defaultAns, answers)
+        } 
+
         var newAnswers = [];
         var output = answers.Output;
         newAnswers.push(answers);
 
-        answers = Object.assign(questions.defaultAns, answers)
 
         // Deleting these so they don't go into the query string
         delete answers.filters

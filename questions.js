@@ -1,7 +1,7 @@
 const sub_accounts_choices = require('./sub_accounts')
 var fs = require('fs');
 const canvas = require('canvas-api-wrapper');
-const configs = require('./config')
+
 
 var start_question_choices = [{
   name: 'Enrollments',
@@ -454,40 +454,47 @@ function overrideWhen (object, value) {
   // loop through object keys. Keys should correspond with the keys of question object
   // set the 'when' key of the corresponding question object with variable value
 
-  /*object.filters.forEach(filter => {
-      start_question_choices.forEach(question =>{
-        if(question.name === filter){
-          question.checked = true
+
+
+      var questions_to_ask = Object.keys(object)
+  
+      questions_to_ask.map(question =>{
+        //console.log(question)
+        if (question === 'by_teachers'){
+          questions.teacher_api_search.when = value
+          questions.by_teachers.when = value
+        } else {
+          questions[question].when = value
         }
       })
-    }) */
 
-    var questions_to_ask = Object.keys(object)
 
-    questions_to_ask.map(question =>{
-      //console.log(question)
-      if (question === 'by_teachers'){
-        questions.teacher_api_search.when = value
-        questions.by_teachers.when = value
-      } else {
-        questions[question].when = value
-      }
-    })
     // Used for debugging shenanigans 
     //console.log(questions)
 }
-
-
 
 function setDefaultValues (object) {
   // questions not asked basically set the when to false.
   return answers = object
 }
 
-overrideWhen(configs.defaults, true)
-//overrideWhen(configs.values, false)
-var defaultAns = setDefaultValues(configs.values)
-console.log(defaultAns)
+
+if (fs.existsSync('./config.js')) {
+  // Used for debugging shenanigans
+  //console.log(true)
+
+  const configs = require('./config')
+  overrideWhen(configs.defaults, true)
+  var defaultAns = setDefaultValues(configs.values)
+  
+} else {
+  questions.filters.when = true
+}
+
+
+
+
+
 var questionsArray = Object.keys(questions).map(questionKey => questions[questionKey])
 
 
