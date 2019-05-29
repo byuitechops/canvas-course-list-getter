@@ -45,6 +45,26 @@ var start_question_choices = [{
 },
 ]
 
+var enrollment_type_choices = [
+  {name:'teacher',
+  checked: false
+  },
+  {
+    name: 'student',
+    checked: false,
+  },
+  {
+    name: 'ta',
+    checked: false
+  },
+  {
+    name: 'observer',
+    checked: false
+  },
+  {
+    name:'designer',
+    checked: false
+  }]
 
 var filters = {
   type: 'checkbox',
@@ -94,7 +114,7 @@ var enrollment_type = {
   type: 'checkbox',
   name: 'enrollment_type',
   message: 'Do you want to only have courses that have at least one person enrolled with this specific user role type?',
-  choices: ['teacher', 'student', 'ta', 'observer', 'designer'],
+  choices: enrollment_type_choices,
   when:false || function (answers) {
     if(answers.filters === undefined){
       return false
@@ -454,12 +474,51 @@ function overrideWhen (object, value) {
   // loop through object keys. Keys should correspond with the keys of question object
   // set the 'when' key of the corresponding question object with variable value
 
+      object.filters.forEach(filter => {
+        start_question_choices.map(fil => {
+          // Used for debugging shenanigans
+          // console.log(fil.name)
+          if (fil.name === filter){
+            fil.checked = true
+          }
+        })
+      });
+
+
+      
 
 
       var questions_to_ask = Object.keys(object)
   
       questions_to_ask.map(question =>{
-        //console.log(question)
+        // Used for debugging shenanigans
+        // console.log(question)
+        if (question === 'by_subaccounts'){
+          // Used for debugging shenanigans
+          // console.log(sub_accounts_choices)
+          sub_accounts_choices.map(choice => {
+   
+            object.by_subaccounts.forEach(account =>{
+       
+              if (account === choice.id){
+                choice.checked = true
+              }
+            })
+          })
+        }
+
+        if (question === 'enrollment_type'){
+          enrollment_type_choices.map(choice => {
+
+            object.enrollment_type.forEach(type =>{
+              
+              if (type === choice.name){
+                choice.checked = true
+              }
+            })
+          })
+        }
+
         if (question === 'by_teachers'){
           questions.teacher_api_search.when = value
           questions.by_teachers.when = value
@@ -486,14 +545,10 @@ if (fs.existsSync('./config.js')) {
   const configs = require('./config')
   overrideWhen(configs.defaults, true)
   var defaultAns = setDefaultValues(configs.values)
-  
+
 } else {
   questions.filters.when = true
 }
-
-
-
-
 
 var questionsArray = Object.keys(questions).map(questionKey => questions[questionKey])
 
