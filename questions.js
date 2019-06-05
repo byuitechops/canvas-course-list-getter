@@ -486,8 +486,6 @@ function overrideWhen (object, value) {
 
 
       
-
-
       var questions_to_ask = Object.keys(object)
   
       questions_to_ask.map(question =>{
